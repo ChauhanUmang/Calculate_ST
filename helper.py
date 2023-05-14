@@ -15,14 +15,14 @@ def check_trigger(i, df):
 
         if istime924:
             # check previous three candles
-            return check_past_3_candles(i, df)
+            return 'yes', check_past_3_candles(i, df)
 
-        return ''
+        return 'no', ''
     else:
         if df.at[i, 'Color'] == 'Red':
-            return 'CE SELL'
+            return 'no', 'CE SELL'
         else:
-            return 'PE SELL'
+            return 'no', 'PE SELL'
 
 
 def check_9_24(timestamp):

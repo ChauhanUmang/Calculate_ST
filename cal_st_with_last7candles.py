@@ -2,29 +2,38 @@ import pandas as pd
 import helper
 from datetime import datetime
 
-df = pd.read_excel('Oct2022.xlsx')
+df = pd.read_excel('Data.xlsx')
 pd.set_option('display.max_columns', None)
 
 entry_df = pd.read_excel('Entry.xlsx')
 
 ATR_Period = 7
 Multiplier = 3
-PreviousClose = 43038.5
-PreviousATR = 71.49
-PreviousFUB = 43132.48
-PreviousFLB = 42844.43
-PreviousSupertrend = 43132.48
-PreviousColor = 'Red'
+# PreviousClose = 43038.5
+# PreviousATR = 71.49
+# PreviousFUB = 43132.48
+# PreviousFLB = 42844.43
+# PreviousSupertrend = 43132.48
+# PreviousColor = 'Red'
 lst = ['CE SELL', 'PE SELL']
 
-# ATR values from 31-12-2020 15:09 to 15:27
-ATR0 = 31.1
-ATR1 = 31.69
-ATR2 = 33.08
-ATR3 = 33.33
-ATR4 = 34.96
-ATR5 = 34.77
-ATR6 = 35.07
+# ATR values from 31-12-2020 15:09 to 15:27 from Zerodha chartIQ
+# ATR0 = 31.1
+# ATR1 = 31.69
+# ATR2 = 33.08
+# ATR3 = 33.33
+# ATR4 = 34.96
+# ATR5 = 34.77
+# ATR6 = 35.07
+
+# atr values from zerodha trading view chart
+ATR0 = 31.1022
+ATR1 = 31.6876
+ATR2 = 33.0822
+ATR3 = 33.3348
+ATR4 = 34.9584
+ATR5 = 34.7715
+ATR6 = 35.0684
 
 df['FUB'] = 0.00
 df['FLB'] = 0.00
@@ -243,16 +252,32 @@ for i in range(0, len(df)):
 
         df.at[i, 'Color'] = 'Red' if df.at[i, 'Supertrend'] == df.at[i, 'FUB'] else 'Green'
 
-        df.at[i, 'Signal'] = helper.check_trigger(i, df)
+        # df.at[i+1, 'Signal'] = helper.check_trigger(i, df)
 
-        #  if signal in list, then add entry in new dataframe
-        if df.at[i, 'Signal'] in lst:
-            t = df.at[i, 'Date'].to_pydatetime()
-            t.date()
-            new_row = {'Date': t.date(), 'Trigger': df.at[i, 'Color'],
-                       'Option': df.at[i, 'Signal'], 'Entry_Time': df.at[i, 'Date']}
+        is924, signal_val = helper.check_trigger(i, df)
 
-            entry_df.loc[len(entry_df)] = new_row
+        if is924 == 'yes':
+            df.at[i, 'Signal'] = signal_val
+
+            #  if signal in list, then add entry in new dataframe
+            if df.at[i, 'Signal'] in lst:
+                t = df.at[i, 'Date'].to_pydatetime()
+                t.date()
+                new_row = {'Date': t.date(), 'Trigger': df.at[i, 'Color'],
+                           'Option': df.at[i, 'Signal'], 'Entry_Time': df.at[i, 'Date']}
+
+                entry_df.loc[len(entry_df)] = new_row
+
+        else:
+            df.at[i + 1, 'Signal'] = signal_val
+            #  if signal in list, then add entry in new dataframe
+            if df.at[i + 1, 'Signal'] in lst:
+                t = df.at[i, 'Date'].to_pydatetime()
+                t.date()
+                new_row = {'Date': t.date(), 'Trigger': df.at[i, 'Color'],
+                           'Option': df.at[i + 1, 'Signal'], 'Entry_Time': df.at[i, 'Date']}
+
+                entry_df.loc[len(entry_df)] = new_row
 
             # entry_df.loc[len(entry_df.index), 'Date'] = t.date()
             # entry_df.loc[len(entry_df.index), 'Trigger'] = df.at[i, 'Color']
@@ -267,5 +292,5 @@ for i in range(0, len(df)):
         #                     'PE SELL' if df.at[i, 'Color'] == 'Green' and df.at[i-1, 'Color'] == 'Red' else ''
 
 
-df.to_excel('Oct_Result_v1.xlsx', index=False)
-entry_df.to_excel('Entry_Result.xlsx', index=False)
+df.to_excel('Data_Result_v4.xlsx', index=False)
+entry_df.to_excel('Entry_Result_v4.xlsx', index=False)
