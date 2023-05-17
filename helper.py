@@ -33,6 +33,14 @@ def check_9_24(timestamp):
         return False
 
 
+def check_15_27(timestamp):
+    dt = datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+    if dt.hour == 15 and dt.minute == 27:
+        return True
+    else:
+        return False
+
+
 def check_past_3_candles(i, df):
     lst = ['CE SELL', 'PE SELL']
     if df.at[i-1, 'Signal'] in lst or df.at[i-2, 'Signal'] in lst or df.at[i-3, 'Signal'] in lst:
