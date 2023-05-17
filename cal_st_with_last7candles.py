@@ -269,15 +269,20 @@ for i in range(0, len(df)):
                 entry_df.loc[len(entry_df)] = new_row
 
         else:
-            df.at[i + 1, 'Signal'] = signal_val
-            #  if signal in list, then add entry in new dataframe
-            if df.at[i + 1, 'Signal'] in lst:
-                t = df.at[i, 'Date'].to_pydatetime()
-                t.date()
-                new_row = {'Date': t.date(), 'Trigger': df.at[i, 'Color'],
-                           'Option': df.at[i + 1, 'Signal'], 'Entry_Time': df.at[i, 'Date']}
+            # should check here if the trigger is not at the end of the day.
+            # check if time is 15:27
+            if helper.check_15_27(str(df.at[i, 'Date'])):
+                df.at[i+1, 'Signal'] = ''
+            else:
+                df.at[i + 1, 'Signal'] = signal_val
+                #  if signal in list, then add entry in new dataframe
+                if df.at[i + 1, 'Signal'] in lst:
+                    t = df.at[i, 'Date'].to_pydatetime()
+                    t.date()
+                    new_row = {'Date': t.date(), 'Trigger': df.at[i, 'Color'],
+                               'Option': df.at[i + 1, 'Signal'], 'Entry_Time': df.at[i+1, 'Date']}
 
-                entry_df.loc[len(entry_df)] = new_row
+                    entry_df.loc[len(entry_df)] = new_row
 
             # entry_df.loc[len(entry_df.index), 'Date'] = t.date()
             # entry_df.loc[len(entry_df.index), 'Trigger'] = df.at[i, 'Color']
@@ -292,5 +297,5 @@ for i in range(0, len(df)):
         #                     'PE SELL' if df.at[i, 'Color'] == 'Green' and df.at[i-1, 'Color'] == 'Red' else ''
 
 
-df.to_excel('Data_Result_v4.xlsx', index=False)
-entry_df.to_excel('Entry_Result_v4.xlsx', index=False)
+df.to_excel('Data_Result_v6.xlsx', index=False)
+entry_df.to_excel('Entry_Result_v6.xlsx', index=False)
