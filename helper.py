@@ -8,10 +8,13 @@ def maximum(a, b, c):
 
 
 def check_trigger(i, df):
+    # 9:24 send signal according to color
+    istime924 = check_9_24(str(df.at[i, 'Date']))
+
     if df.at[i, 'Color'] == df.at[i-1, 'Color']:
         # check time here if time is 9:24 and previous three candle have signal as '' then at
         # 9:24 send signal according to color
-        istime924 = check_9_24(str(df.at[i, 'Date']))
+        # istime924 = check_9_24(str(df.at[i, 'Date']))
 
         if istime924:
             # check previous three candles
@@ -23,6 +26,17 @@ def check_trigger(i, df):
             return 'no', 'CE SELL'
         else:
             return 'no', 'PE SELL'
+
+        # if istime924:
+        #     if df.at[i, 'Color'] == 'Red':
+        #         return 'yes', 'CE SELL'
+        #     else:
+        #         return 'yes', 'PE SELL'
+        # else:
+        #     if df.at[i, 'Color'] == 'Red':
+        #         return 'no', 'CE SELL'
+        #     else:
+        #         return 'no', 'PE SELL'
 
 
 def check_9_24(timestamp):
@@ -43,7 +57,8 @@ def check_15_27(timestamp):
 
 def check_past_3_candles(i, df):
     lst = ['CE SELL', 'PE SELL']
-    if df.at[i-1, 'Signal'] in lst or df.at[i-2, 'Signal'] in lst or df.at[i-3, 'Signal'] in lst:
+    if df.at[i, 'Signal'] in lst or df.at[i-1, 'Signal'] in lst or df.at[i-2, 'Signal'] in lst \
+            or df.at[i-3, 'Signal'] in lst:
         return ''
     else:
         if df.at[i, 'Color'] == 'Red':
